@@ -1,3 +1,5 @@
+from order import order, show_summary
+
 #function t display the restaurant menu
 def show_menu(): 
     print("    \n            OUR MENU\n")      #starters section
@@ -19,15 +21,19 @@ def show_menu():
     print("12. Lassi - Rs. 100")
     print("13. Tea - Rs. 40")
     print("14. Coffee - Rs. 70")
-while True:                                    #infinite loop for main menu
-    print("Welcome to Restaurant management system")  #displaying welcome message and options
+while True:
+    print("Welcome to Restaurant management system")
     print("    1. View Menu")
-    print("    2. Exit")
-    choice = input("Choose an option (1 or 2): ")  #user to choose an option
-    if choice=='1':                #if user chooses to view menu
+    print("    2. Make the order and View Order Summary")
+    print("    3. Exit")
+    choice = input("Choose an option (1,2 or 3): ")
+    if choice=='1':
         show_menu()
-    elif choice=='2':              #if user chooses to exit the program
+    elif choice=='2':
+        order_list = order()
+        show_summary(order_list)
+    elif choice=='3':
         print("Thankyou For visisting! Goodbye!")
         break
-    else:                       #in case user chooses an invalid option
+    else:
         print("\nInvalid option. Please try again.\n")
