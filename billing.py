@@ -82,7 +82,7 @@ class Bill:
             f.write("Total: " + str(total) + "\n")
             f.write("---------\n")
 
-# Run the program
+
 my_bill = Bill()
 my_bill.take_order()
 discount = float(input("Discount % (0 if none): "))
