@@ -1,0 +1,37 @@
+Order Date: 2025-05-24 21:04:05.396377
+
+Order Date: 2025-05-24 21:06:05.759498
+
+Order Date: 2025-05-24 21:08:05.907938
+
+Order Date: 2025-05-24 21:25:28.752234
+
+Order Date: 2025-05-24 21:28:18.423572
+
+Order Date: 2025-05-24 21:56:33.943417
+
+Order Date: 2025-05-25 01:46:44.971454
+
+Order Date: 2025-05-25 18:25:22.718503
+Item: Soup, Quantity: 2, Price: 200, Total: 400
+
+Order Date: 2025-05-25 18:33:06.260031
+Item: Biryani, Quantity: 2, Price: 250, Total: 500
+Item: Soft Drink, Quantity: 2, Price: 50, Total: 100
+
+Order Date: 2025-05-25 18:39:10.243253
+Item: Fries, Quantity: 5, Price: 150, Total: 750
+Item: BBQ Platter, Quantity: 1, Price: 1200, Total: 1200
+
+Order Date: 2025-05-25 18:41:52.127443
+Item: Soup, Quantity: 4, Price: 200, Total: 800
+Item: Fries, Quantity: 5, Price: 150, Total: 750
+
+Order Date: 2025-05-25 18:50:50.145619
+Item: Soup, Quantity: 5, Price: 200, Total: 1000
+Item: Naan, Quantity: 4, Price: 30, Total: 120
+Subtotal: Rs. 1120
+Discount: -Rs. 112.0
+Tax: +Rs. 50.4
+Total Payable: Rs. 1058.40
+

@@ -1,4 +1,6 @@
-from order import order, show_summary
+from order import take_order, show_summary
+from billing import Order, billing_summary, add_bills
+
 
 #function t display the restaurant menu
 def show_menu(): 
@@ -21,6 +23,24 @@ def show_menu():
     print("12. Lassi - Rs. 100")
     print("13. Tea - Rs. 40")
     print("14. Coffee - Rs. 70")
+
+# Dictionary to hold menu items
+menu_items = {
+    1: ("Chicken Wings", 300),
+    2: ("Fries", 150),
+    3: ("Soup", 200),
+    4: ("Biryani", 250),
+    5: ("Chicken Karahi", 800),
+    6: ("Naan", 30),
+    7: ("BBQ Platter", 1200),
+    8: ("Kheer", 120),
+    9: ("Gulab Jamun", 100),
+    10: ("Ice Cream", 150),
+    11: ("Soft Drink", 50),
+    12: ("Lassi", 100),
+    13: ("Tea", 40),
+    14: ("Coffee", 70)
+}
 while True:
     print("Welcome to Restaurant management system")
     print("    1. View Menu")
@@ -30,8 +50,17 @@ while True:
     if choice=='1':
         show_menu()
     elif choice=='2':
-        order_list = order()
+        order_list = take_order()
         show_summary(order_list)
+        orders = []
+        for item_no, qty in order_list:
+         if item_no in menu_items:
+           name, price = menu_items[item_no]
+           orders.append(Order(name, qty, price))
+
+        billing_summary(orders)  
+
+
     elif choice=='3':
         print("Thankyou For visisting! Goodbye!")
         break
