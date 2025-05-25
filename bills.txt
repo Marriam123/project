@@ -35,3 +35,18 @@ Discount: -Rs. 112.0
 Tax: +Rs. 50.4
 Total Payable: Rs. 1058.40
 
+Order Date: 2025-05-25 19:27:18.832275
+Item: Chicken Karahi, Quantity: 6, Price: 800, Total: 4800
+Item: BBQ Platter, Quantity: 8, Price: 1200, Total: 9600
+Subtotal: Rs. 14400
+Discount: -Rs. 1440.0
+Tax: +Rs. 648.0
+Total Payable: Rs. 13608.00
+
+Order Date: 2025-05-25 19:35:53.973037
+Item: Soup, Quantity: 4, Price: 200, Total: 800
+Subtotal: Rs. 800
+Discount: -Rs. 0
+Tax: +Rs. 40.0
+Total Payable: Rs. 840.00
+
