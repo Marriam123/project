@@ -13,18 +13,25 @@ class Order:
     def __str__(self):
         return f"Item: {self.item_name}, Quantity: {self.quantity}, Price: {self.price}, Total: {self.total}"
     
-def add_bills(orders, subtotal, discount_amount, tax_amount, final_total):
+def add_bills(orders, subtotal, discount_amount, tax_amount, final_total, email, phone, order_id):
+
     with open("bills.txt", "a") as file:
         file.write(f"Order Date: {datetime.datetime.now()}\n")
+        file.write(f"Order ID: {order_id}\n")
+        file.write(f"Email: {email}\n")
+        file.write(f"Phone: {phone}\n")
         for order in orders:
             file.write(str(order) + "\n")
         file.write(f"Subtotal: Rs. {subtotal}\n")
         file.write(f"Discount: -Rs. {discount_amount}\n")
         file.write(f"Tax: +Rs. {tax_amount}\n")
-        file.write(f"Total Payable: Rs. {final_total:.2f}\n\n")
+        file.write(f"Total Payable: Rs. {final_total:.2f}\n")
+        file.write("="*50 + "\n\n")
 
 
-def billing_summary(orders):
+
+def billing_summary(orders, email, phone,order_id):
+
     subtotal = 0
     print("\n" + "="*40)
     print("              BILLING SUMMARY")
@@ -58,5 +65,5 @@ def billing_summary(orders):
     print(f"\nTotal Payable Amount: Rs. {final_total:.2f}")
     print("Thank you for your order!")
 
-    add_bills(orders, subtotal, discount_amount, tax_amount, final_total)
+    add_bills(orders, subtotal, discount_amount, tax_amount, final_total, email, phone, order_id)
 
