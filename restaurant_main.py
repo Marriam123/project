@@ -1,6 +1,6 @@
 # restaurant_main.py
 from order import take_order, show_summary, get_next_order_id
-from billing import Order,billing_summary
+from billing import Order, billing_summary
 from notification import NotificationManager
 import random
 
@@ -30,15 +30,26 @@ def show_menu():
         print(f"{item_id}. {name} - Rs. {price}")
 
 def admin_portal():
+    def load_orders_from_file():
+        try:
+            with open("bills.txt", "r") as f:
+                content = f.read().strip()
+                return content.split("\n\n") if content else []
+        except FileNotFoundError:
+            return []
+
+    def save_orders_to_file(all_orders):
+        with open("bills.txt", "w") as f:
+            f.write("\n\n".join(all_orders))
+
     while True:
         print("\n--- Admin Portal ---")
         print("1. Add Item to Menu")
         print("2. Delete Item from Menu")
-        print("3. Update Item Price")
-        print("4. View All Orders")
-        print("5. Delete an Order")
-        print("6. View Sales Analytics")
-        print("7. Return to Main Menu")
+        print("3. View All Orders")
+        print("4. Delete an Order")
+        print("5. View Sales Analytics")
+        print("6. Return to Main Menu")
 
         choice = input("Enter choice: ")
 
@@ -48,6 +59,7 @@ def admin_portal():
             item_id = max(menu_items.keys()) + 1
             menu_items[item_id] = (name, price)
             print(f"Added {name} with ID {item_id}.")
+
         elif choice == '2':
             item_id = int(input("Enter item ID to delete: "))
             if item_id in menu_items:
@@ -55,34 +67,48 @@ def admin_portal():
                 print("Item deleted.")
             else:
                 print("Invalid item ID.")
+
         elif choice == '3':
-            item_id = int(input("Enter item ID to update: "))
-            if item_id in menu_items:
-                new_price = int(input("Enter new price: "))
-                name = menu_items[item_id][0]
-                menu_items[item_id] = (name, new_price)
-                print("Price updated.")
+            orders = load_orders_from_file()
+            if not orders:
+                print("No orders found in file.")
             else:
-                print("Invalid item ID.")
+                for i, order in enumerate(orders, 1):
+                    print(f"\nOrder #{i}\n{order}")
+
         elif choice == '4':
-            if not orders_db:
-                print("No orders yet.")
+            orders = load_orders_from_file()
+            if not orders:
+                print("No orders to delete.")
             else:
-                for i, order_set in enumerate(orders_db, 1):
-                    print(f"\nOrder #{i}")
-                    for order in order_set:
-                        print(order)
+                for i, order in enumerate(orders, 1):
+                    print(f"\nOrder #{i}\n{order}")
+                try:
+                    idx = int(input("Enter order number to delete: ")) - 1
+                    if 0 <= idx < len(orders):
+                        del orders[idx]
+                        save_orders_to_file(orders)
+                        print("Order deleted successfully.")
+                    else:
+                        print("Invalid order number.")
+                except ValueError:
+                    print("Invalid input. Please enter a number.")
+
         elif choice == '5':
-            idx = int(input("Enter order number to delete: ")) - 1
-            if 0 <= idx < len(orders_db):
-                del orders_db[idx]
-                print("Order deleted.")
-            else:
-                print("Invalid order number.")
+            orders = load_orders_from_file()
+            total_sales = 0.0
+            for order in orders:
+                lines = order.splitlines()
+                for line in lines:
+                    if "Total Payable:" in line:
+                        try:
+                            amount = float(line.split("Total Payable: Rs.")[1].strip())
+                            total_sales += amount
+                        except (IndexError, ValueError):
+                            pass
+            print(f"\nTotal Sales: Rs. {total_sales:.2f}")
+
         elif choice == '6':
-            total_sales = sum(sum(order.total for order in order_set) for order_set in orders_db)
-            print(f"Total Sales: Rs. {total_sales:.2f}")
-        elif choice == '7':
             break
         else:
             print("Invalid input.")
@@ -100,24 +126,20 @@ def client_portal():
             show_menu()
         elif choice == '2':
             order_list = take_order(menu_items)
-            show_summary(order_list,menu_items)
+            show_summary(order_list, menu_items)
             orders = []
 
             for item_no, qty in order_list:
                 if item_no in menu_items:
                     name, price = menu_items[item_no]
                     orders.append(Order(name, qty, price))
+
             order_id = get_next_order_id()
-
-
-
             email = input("Enter your email address for order confirmation: ")
             phone = input("Enter your WhatsApp number (with country code): ")
-            billing_summary(orders, email, phone,order_id)
+            billing_summary(orders, email, phone, order_id)
 
             orders_db.append(orders)
-
-            
 
             notifier = NotificationManager(email, phone)
             notifier.send_email(order_id)
@@ -128,23 +150,4 @@ def client_portal():
         else:
             print("Invalid input.")
 
-def main():
-    while True:
-        print("\n--- Welcome to Restaurant Management System ---")
-        print("1. Admin Portal")
-        print("2. Client Portal")
-        print("3. Exit")
-        choice = input("Enter your choice: ")
 
-        if choice == '1':
-            admin_portal()
-        elif choice == '2':
-            client_portal()
-        elif choice == '3':
-            print("Thank you! Exiting.")
-            break
-        else:
-            print("Invalid input.")
-
-if __name__ == "__main__":
-    main()
