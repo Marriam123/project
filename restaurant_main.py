@@ -2,6 +2,8 @@
 from order import take_order, show_summary, get_next_order_id
 from billing import Order, billing_summary
 from notification import NotificationManager
+from auth_system import authenticate
+
 import random
 
 menu_items = {
@@ -30,6 +32,10 @@ def show_menu():
         print(f"{item_id}. {name} - Rs. {price}")
 
 def admin_portal():
+    if not authenticate("Admin"):
+        print("Authentication failed. Returning to main menu.")
+        return
+
     def load_orders_from_file():
         try:
             with open("bills.txt", "r") as f:
@@ -114,6 +120,11 @@ def admin_portal():
             print("Invalid input.")
 
 def client_portal():
+    if not authenticate("Client"):
+        print("Authentication failed. Returning to main menu.")
+        return
+    
+
     while True:
         print("\n--- Client Portal ---")
         print("1. View Menu")
