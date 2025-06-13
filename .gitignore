@@ -7,6 +7,6 @@ venv/
 
 # Ignore generated data and log files
 bills.txt
-ordercounter.txt
-user.txt
+order_counter.txt
+users.txt
 admin.txt
