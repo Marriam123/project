@@ -1,52 +1,23 @@
-# restaurant_main.py
-from order import take_order, show_summary, get_next_order_id
-from billing import Order, billing_summary
+from order import take_order, show_summary
+from billing import Order, billing_summary, calculate_final_price
 from notification import NotificationManager
 from auth_system import authenticate
-
-import random
-
-menu_items = {
-    1: ("Chicken Wings", 300),
-    2: ("Fries", 150),
-    3: ("Soup", 200),
-    4: ("Biryani", 250),
-    5: ("Chicken Karahi", 800),
-    6: ("Naan", 30),
-    7: ("BBQ Platter", 1200),
-    8: ("Kheer", 120),
-    9: ("Gulab Jamun", 100),
-    10: ("Ice Cream", 150),
-    11: ("Soft Drink", 50),
-    12: ("Lassi", 100),
-    13: ("Tea", 40),
-    14: ("Coffee", 70)
-}
-
-orders_db = []
+from db_module import (
+    connect_db, save_order, fetch_orders, get_user_id, fetch_menu_items,
+    add_menu_item, delete_menu_item, delete_order_from_db
+)
 
 def show_menu():
+    menu_items = fetch_menu_items()  # Fetch menu items from the database
     print("\n            OUR MENU")
-    for item_id in sorted(menu_items):
-        name, price = menu_items[item_id]
-        print(f"{item_id}. {name} - Rs. {price}")
+    for item in menu_items:
+        print(f"{item['id']}. {item['name']} - Rs. {item['price']}")
+    return menu_items
 
 def admin_portal():
     if not authenticate("Admin"):
         print("Authentication failed. Returning to main menu.")
         return
-
-    def load_orders_from_file():
-        try:
-            with open("bills.txt", "r") as f:
-                content = f.read().strip()
-                return content.split("\n\n") if content else []
-        except FileNotFoundError:
-            return []
-
-    def save_orders_to_file(all_orders):
-        with open("bills.txt", "w") as f:
-            f.write("\n\n".join(all_orders))
 
     while True:
         print("\n--- Admin Portal ---")
@@ -61,61 +32,67 @@ def admin_portal():
 
         if choice == '1':
             name = input("Enter item name: ")
-            price = int(input("Enter item price: "))
-            item_id = max(menu_items.keys()) + 1
-            menu_items[item_id] = (name, price)
-            print(f"Added {name} with ID {item_id}.")
+            try:
+                price = float(input("Enter item price: "))
+            except ValueError:
+                print("Invalid price input.")
+                continue
+            add_menu_item(name, price)
+            print(f"Added {name} to the menu.")
 
         elif choice == '2':
-            item_id = int(input("Enter item ID to delete: "))
-            if item_id in menu_items:
-                del menu_items[item_id]
-                print("Item deleted.")
-            else:
-                print("Invalid item ID.")
+            menu_items = fetch_menu_items()
+            if not menu_items:
+                print("No menu items to delete.")
+                continue
+            print("Menu Items:")
+            for item in menu_items:
+                print(f"{item['id']}. {item['name']} - Rs. {item['price']}")
+            try:
+                item_id = int(input("Enter item ID to delete: "))
+            except ValueError:
+                print("Invalid input.")
+                continue
+            delete_menu_item(item_id)
+            print("Item deleted if existed.")
 
         elif choice == '3':
-            orders = load_orders_from_file()
+            orders = fetch_orders()
             if not orders:
-                print("No orders found in file.")
+                print("No orders found.")
             else:
-                for i, order in enumerate(orders, 1):
-                    print(f"\nOrder #{i}\n{order}")
+                for order in orders:
+                    print(f"Order ID: {order['id']}")
+                    print(f"Customer Name: {order['name']}")
+                    print(f"Phone: {order['phone']}")
+                    print(f"Email: {order['email']}")
+                    print(f"Items: {order['order_summary']}")
+                    print(f"Total: Rs. {order['total_price']}")
+                    print(f"Order Time: {order.get('order_time', 'N/A')}")
+                    print("-" * 30)
 
         elif choice == '4':
-            orders = load_orders_from_file()
+            orders = fetch_orders()
             if not orders:
                 print("No orders to delete.")
-            else:
-                for i, order in enumerate(orders, 1):
-                    print(f"\nOrder #{i}\n{order}")
-                try:
-                    idx = int(input("Enter order number to delete: ")) - 1
-                    if 0 <= idx < len(orders):
-                        del orders[idx]
-                        save_orders_to_file(orders)
-                        print("Order deleted successfully.")
-                    else:
-                        print("Invalid order number.")
-                except ValueError:
-                    print("Invalid input. Please enter a number.")
+                continue
+            for order in orders:
+                print(f"Order ID: {order['id']} | Total: Rs. {order['total_price']}")
+            try:
+                order_id = int(input("Enter Order ID to delete: "))
+                delete_order_from_db(order_id)
+                print("Order deleted.")
+            except ValueError:
+                print("Invalid input.")
 
         elif choice == '5':
-            orders = load_orders_from_file()
-            total_sales = 0.0
-            for order in orders:
-                lines = order.splitlines()
-                for line in lines:
-                    if "Total Payable:" in line:
-                        try:
-                            amount = float(line.split("Total Payable: Rs.")[1].strip())
-                            total_sales += amount
-                        except (IndexError, ValueError):
-                            pass
+            orders = fetch_orders()
+            total_sales = sum(order['total_price'] for order in orders)
             print(f"\nTotal Sales: Rs. {total_sales:.2f}")
 
         elif choice == '6':
             break
+
         else:
             print("Invalid input.")
 
@@ -123,7 +100,12 @@ def client_portal():
     if not authenticate("Client"):
         print("Authentication failed. Returning to main menu.")
         return
-    
+
+    name = input("Enter your name (used during signup): ").strip()
+    user_id = get_user_id(name)
+    if not user_id:
+        print("User not found. Please ensure the correct name is used.")
+        return
 
     while True:
         print("\n--- Client Portal ---")
@@ -135,30 +117,37 @@ def client_portal():
 
         if choice == '1':
             show_menu()
+
         elif choice == '2':
-            order_list = take_order(menu_items)
-            show_summary(order_list, menu_items)
+            menu_items = fetch_menu_items()
+            order_list = take_order({item['id']: (item['name'], item['price']) for item in menu_items})
+            show_summary(order_list, {item['id']: (item['name'], item['price']) for item in menu_items})
+
             orders = []
-
             for item_no, qty in order_list:
-                if item_no in menu_items:
-                    name, price = menu_items[item_no]
-                    orders.append(Order(name, qty, price))
+                item = next((item for item in menu_items if item['id'] == item_no), None)
+                if item:
+                    orders.append(Order(item['name'], qty, item['price']))
 
-            order_id = get_next_order_id()
-            email = input("Enter your email address for order confirmation: ")
-            phone = input("Enter your WhatsApp number (with country code): ")
-            billing_summary(orders, email, phone, order_id)
+            phone = input("Enter your phone number: ")
+            email = input("Enter your email: ")
 
-            orders_db.append(orders)
+            order_summary = ", ".join([f"{o.quantity}x {o.item_name}" for o in orders])
 
-            notifier = NotificationManager(email, phone)
-            notifier.send_email(order_id)
-            notifier.send_whatsapp(order_id)
+            final_price, discount, tax = calculate_final_price(orders)
+
+            order_id = save_order(user_id, name, phone, email, order_summary, final_price)
+
+            if order_id:
+                billing_summary(orders, email, phone, order_id)
+                notification = NotificationManager(email, phone)
+                notification.send_email(order_id)
+                notification.send_whatsapp(order_id)
+                print(f"Order placed successfully! Your Order ID is: {order_id}")
+            else:
+                print("Failed to place order. Please try again.")
 
         elif choice == '3':
             break
         else:
             print("Invalid input.")
-
-

@@ -27,17 +27,5 @@ def show_summary(order_list, menu_items):
         item = menu_items.get(item_no, ("Unknown Item",))[0]
         print(f"You chose {item} from menu : quantity {quantity}")
 
-def get_next_order_id():
-    try:
-        with open("order_counter.txt", "r") as f:
-            last_id = int(f.read().strip())
-    except (FileNotFoundError, ValueError):
-        last_id = 1000  # Starting order number
 
-    next_id = last_id + 1
-
-    with open("order_counter.txt", "w") as f:
-        f.write(str(next_id))
-
-    return next_id
 
