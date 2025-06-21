@@ -1,12 +1,14 @@
-def take_order():
+# order.py
+
+def take_order(menu_items):
     order_list = []
     while True:
-        choice = input("Enter your order (1-14) or 'done' to finish: ")
+        choice = input("Enter your order or 'done' to finish: ")
         if choice.lower() == 'done':
             break
         try:
             item_no = int(choice)
-            if 1 <= item_no <= 14:
+            if item_no in menu_items:
                 quantity = int(input("Enter quantity: "))
                 if quantity > 0:
                     order_list.append((item_no, quantity))
@@ -19,26 +21,11 @@ def take_order():
     return order_list
 
 
-def show_summary(order_list):
-    item_names = {
-        1: "Chicken Wings",
-        2: "Fries",
-        3: "Soup",
-        4: "Biryani",
-        5: "Chicken Karahi",
-        6: "Naan",
-        7: "BBQ Platter",
-        8: "Kheer",
-        9: "Gulab Jamun",
-        10: "Ice Cream",
-        11: "Soft Drink",
-        12: "Lassi",
-        13: "Tea",
-        14: "Coffee"
-    }
-
+def show_summary(order_list, menu_items):
     print("\nOrder Summary:")
     for item_no, quantity in order_list:
-        item = item_names.get(item_no, "Unknown Item")
+        item = menu_items.get(item_no, ("Unknown Item",))[0]
         print(f"You chose {item} from menu : quantity {quantity}")
-    
+
+
+
