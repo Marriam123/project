@@ -1,5 +1,13 @@
 We are completing our OSSD Project. We have our future plans to make it public for use. Also, we are working on it to add different features. Some of our Screenshots are attached below, you can find them.
 
+**_Team Members:_**
+1. Rabia Asim Butt
+2. Marriam Hafeez
+3. Bushra Arfan
+4. Bushra Akhtar
+
+
+
 **Screenshots:**  
 ![Screenshot 2025-06-21 000000](https://github.com/user-attachments/assets/4b6fba6b-1884-42e5-9205-858ca597a829)
 ![Screenshot 2025-06-21 000013](https://github.com/user-attachments/assets/b8aebfca-da54-4871-9eab-3293af0d1277)
@@ -19,7 +27,7 @@ Thanks for your support.
 4. Bushra Akhtar
 
 
-Best Regards,
+Best Regards
 By our Team..
 
 
