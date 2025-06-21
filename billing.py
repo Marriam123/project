@@ -1,62 +1,42 @@
-import datetime
+# billing.py
 
 class Order:
     def __init__(self, item_name, quantity, price):
         self.item_name = item_name
-        self.quantity = int(quantity)
-        self.price = int(price)
-        self.total= self.calculate_total()
+        self.quantity = quantity
+        self.price = price
+        self.total = self.quantity * self.price
 
-    def calculate_total(self):
-        return self.quantity * self.price
-    
-    def __str__(self):
-        return f"Item: {self.item_name}, Quantity: {self.quantity}, Price: {self.price}, Total: {self.total}"
-    
-def add_bills(orders, subtotal, discount_amount, tax_amount, final_total):
-    with open("bills.txt", "a") as file:
-        file.write(f"Order Date: {datetime.datetime.now()}\n")
-        for order in orders:
-            file.write(str(order) + "\n")
-        file.write(f"Subtotal: Rs. {subtotal}\n")
-        file.write(f"Discount: -Rs. {discount_amount}\n")
-        file.write(f"Tax: +Rs. {tax_amount}\n")
-        file.write(f"Total Payable: Rs. {final_total:.2f}\n\n")
+def calculate_final_price(orders):
+    subtotal = sum(o.total for o in orders)
+    subtotal = float(subtotal)  # Converting to float here
+
+    discount = 0.10 * subtotal if subtotal >= 1000 else 0
+    tax = 0.05 * (subtotal - discount)
+    final_price = subtotal - discount + tax
+    return round(final_price, 2), round(discount, 2), round(tax, 2)
 
 
-def billing_summary(orders):
-    subtotal = 0
-    print("\n" + "="*40)
-    print("              BILLING SUMMARY")
-    print("="*40)
-    
+def billing_summary(orders, email, phone, order_id=None):
+    print("\n===== BILL SUMMARY =====")
     for order in orders:
-        print(order)
-        subtotal += order.total
+        print(f"{order.quantity} x {order.item_name} @ Rs. {order.price} = Rs. {order.total}")
 
-    print(f"\nSubtotal: Rs. {subtotal:.2f}")
+    subtotal = sum(o.total for o in orders)
+    subtotal = float(subtotal)  # Convert here too
 
-    # Apply discount if subtotal > 1000
-    discount_percentage = 10
-    discount_amount = 0
+    discount = 0.10 * subtotal if subtotal >= 1000 else 0
+    tax = 0.13 * (subtotal - discount)
+    final_price = subtotal - discount + tax
 
-    if subtotal > 1000:
-        discount_amount = (subtotal * discount_percentage) / 100
-        print(f"Discount ({discount_percentage}%): -Rs. {discount_amount:.2f}")
-    else:
-        print("No discount applied (subtotal must be over Rs. 1000).")
-
-    subtotal_after_discount = subtotal - discount_amount
-
-    # Apply tax
-    tax_percentage = 5
-    tax_amount = (subtotal_after_discount * tax_percentage) / 100
-    print(f"Tax ({tax_percentage}%): +Rs. {tax_amount:.2f}")
-
-    final_total = subtotal_after_discount + tax_amount
-
-    print(f"\nTotal Payable Amount: Rs. {final_total:.2f}")
-    print("Thank you for your order!")
-
-    add_bills(orders, subtotal, discount_amount, tax_amount, final_total)
+    print(f"\nSubtotal: Rs. {subtotal}")
+    if discount > 0:
+        print(f"Discount (10%): -Rs. {round(discount, 2)}")
+    print(f"Tax (13%): Rs. {round(tax, 2)}")
+    print(f"Final Amount: Rs. {round(final_price, 2)}")
+    print(f"Phone: {phone}")
+    print(f"Email: {email}")
+    if order_id:
+        print(f"Order ID: {order_id}")
+    print("=========================\n")
 

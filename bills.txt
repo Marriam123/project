@@ -50,3 +50,38 @@ Discount: -Rs. 0
 Tax: +Rs. 40.0
 Total Payable: Rs. 840.00
 
+Order Date: 2025-05-25 19:45:45.626500
+Item: Chicken Karahi, Quantity: 2, Price: 800, Total: 1600
+Item: Naan, Quantity: 5, Price: 30, Total: 150
+Subtotal: Rs. 1750
+Discount: -Rs. 175.0
+Tax: +Rs. 78.75
+Total Payable: Rs. 1653.75
+
+Order Date: 2025-05-27 13:17:05.397640
+Item: Tea, Quantity: 5, Price: 40, Total: 200
+Item: Biryani, Quantity: 5, Price: 250, Total: 1250
+Subtotal: Rs. 1450
+Discount: -Rs. 145.0
+Tax: +Rs. 65.25
+Total Payable: Rs. 1370.25
+
+Order Date: 2025-05-28 17:54:06.788006
+Item: Chicken Karahi, Quantity: 2, Price: 800, Total: 1600
+Item: Naan, Quantity: 4, Price: 30, Total: 120
+Subtotal: Rs. 1720
+Discount: -Rs. 172.0
+Tax: +Rs. 77.4
+Total Payable: Rs. 1625.40
+
+Order Date: 2025-05-28 18:39:41.545848
+Order ID: 1001
+Email: user@email.com
+Phone: +92 3748923759
+Item: Chicken Karahi, Quantity: 2, Price: 805, Total: 1610
+Item: Naan, Quantity: 4, Price: 30, Total: 120
+Subtotal: Rs. 1730
+Discount: -Rs. 173.0
+Tax: +Rs. 77.85
+Total Payable: Rs. 1634.85
+==================================================
