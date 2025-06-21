@@ -4,10 +4,10 @@ from mysql.connector import Error
 def connect_db():
     try:
         return mysql.connector.connect(
-            host="srv1639.hstgr.io",
-            user="u321618830_marriam",
-            password="Marriam@2005",
-            database="u321618830_restaurant_db"
+            host="yourHost",
+            user="yourUserName",
+            password="yourPassword",
+            database="yourDatabase" #Use PHPMYADMIN for this database.
 
         )
     except Error as e:
